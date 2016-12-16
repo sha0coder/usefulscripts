@@ -92,7 +92,17 @@ if ($nc =~ /succeeded/) {
 	bad();
 }
 
-print "\n* $iface network ok!!\n";
+print '- local dns resolution ';
+$dns=`dig $remote_name | grep -v ';' | grep $remote_name  2>/dev/null`;
+@ips=($dns =~/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/g);
+
+if (length(@ips) > 0) {
+	good();
+} else {
+	bad('incorrect dns configuration');
+}
+
+print "\n* $iface network Ok!!\n";
 
 
 
