@@ -33,7 +33,13 @@ foreach (@ifaces) {
 
 print "Which interface to check? ";
 $if=<STDIN>;
-chop $if;
+chomp $if;
+
+if ($if < 0 || $#ifaces < $if) {
+	print "bad option.\n";
+	exit 1;	
+}
+
 $iface = $ifaces[$if];
 chop $iface;
 
@@ -59,7 +65,7 @@ print "- configured gateway ";
 
 @gws=`route -n | grep $iface | awk '{ print \$2 }' | sort -u | grep -v 0.0.0.0`;
 
-if (length(@gws) == 0) {
+if ($#gws == -1) {
 	bad('no gw configured');
 } else {
 	good();
@@ -77,10 +83,10 @@ print '- remote dns resolution ';
 $dns=`dig $remote_dns $remote_name | grep -v ';' | grep $remote_name  2>/dev/null`;
 @ips=($dns =~/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/g);
 
-if (length(@ips) > 0) {
-	good();
-} else {
+if ($#ips == -1) {
 	bad('');
+} else {
+	good();
 }
 
 print '- remote tcp ';
@@ -96,10 +102,10 @@ print '- local dns resolution ';
 $dns=`dig $remote_name | grep -v ';' | grep $remote_name  2>/dev/null`;
 @ips=($dns =~/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/g);
 
-if (length(@ips) > 0) {
-	good();
-} else {
+if ($#ips == -1) {
 	bad('incorrect dns configuration');
+} else {
+	good();
 }
 
 print "\n* $iface network Ok!!\n";
