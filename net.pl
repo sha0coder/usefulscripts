@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 # a basic but useful net checker by @sha0coder
+# sudo perl net.pl
 
 #config this#
 $remote_icmp = '8.8.8.8';  
@@ -38,7 +39,7 @@ chop $iface;
 print "Checking $iface:\n";
 print "- link ";
 
-$link=`sudo mii-tool $iface 2>/dev/null`;
+$link=`mii-tool $iface 2>/dev/null`;  # this require root
 
 if ($link =~ /link ok/) {
 	good();
