@@ -22,7 +22,8 @@ sub bad {
 
 
 @ifaces=`cat /proc/net/dev | awk '{ print \$1 }' | grep -v face | grep -v Inter | cut -d ':' -f 1`;
-
+$user=`whoami`;
+chomp $user;
 
 $i=0;
 foreach (@ifaces) {
@@ -37,14 +38,20 @@ $iface = $ifaces[$if];
 chop $iface;
 
 print "Checking $iface:\n";
-print "- link ";
 
-$link=`mii-tool $iface 2>/dev/null`;  # this require root
+if ($user eq 'root') {
+	print "- link ";
 
-if ($link =~ /link ok/) {
-	good();
+	$link=`mii-tool $iface 2>/dev/null`;  # this require root
+
+	if ($link =~ /link ok/) {
+		good();
+	} else {
+		bad('no link');
+	}
+
 } else {
-	bad('no link');
+	print "only root can check the link, skipping his step.\n";
 }
 
 
