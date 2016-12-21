@@ -115,5 +115,11 @@ if ($#ips == -1) {
 	good();
 }
 
-print "\n* $iface network Ok!!\n";
+print '- external ip: ';
+$ip = `curl -ks ifconfig.co`;
+chomp $ip;
+
+print $ip."\n";
+
+print "\n* $iface network Ok!!\n\n";
 
