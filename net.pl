@@ -6,12 +6,17 @@
 $remote_icmp = '8.8.8.8';  
 $remote_dns = '@8.8.8.8';
 $remote_name = 'dogpile.com';
-$timeout = 10;
+$timeout = 15;
 ############
 
 
 sub good {
 	print "[Ok]\n";
+}
+
+sub normal {
+	($msg) = @_;
+	print "[??] ($msg)\n";
 }
 
 sub bad {
@@ -25,7 +30,7 @@ sub bad {
 $user=`whoami`;
 chomp $user;
 
-$i=0;
+$i=1;
 foreach (@ifaces) {
 	print "$i) $_";
 	$i++;
@@ -34,6 +39,7 @@ foreach (@ifaces) {
 print "Which interface to check? ";
 $if=<STDIN>;
 chomp $if;
+$if--;
 
 if ($if < 0 || $#ifaces < $if) {
 	print "bad option.\n";
@@ -53,7 +59,7 @@ if ($user eq 'root') {
 	if ($link =~ /link ok/) {
 		good();
 	} else {
-		bad('no link');
+		normal('no link');
 	}
 
 } else {
@@ -91,8 +97,9 @@ if ($#ips == -1) {
 
 print '- remote tcp ';
 $nc=`nc $ips[0] 80 -vv -z 2>&1`;
+#print "nc $ips[0] 80 -vv -z 2>&1\n";
 
-if ($nc =~ /succeeded/) {
+if ($nc =~ /(open|succeeded)/) {
 	good();
 } else {
 	bad();
@@ -109,8 +116,4 @@ if ($#ips == -1) {
 }
 
 print "\n* $iface network Ok!!\n";
-
-
-
-
 
